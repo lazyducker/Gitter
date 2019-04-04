@@ -53,6 +53,7 @@ export default class Segment extends Component {
             <AtIcon value='search' size='22' color='#333' />
           </View> : <View className='action-view' />
         }
+        
       </View>
     )
   }

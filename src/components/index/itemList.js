@@ -50,6 +50,7 @@ export default class ItemList extends Component {
         })
       }
       case 1: {
+        
         list = itemList.map((item, index) => {
           return (
             <View key={index} onClick={this.handleDeveloperClicked.bind(this, item)}>

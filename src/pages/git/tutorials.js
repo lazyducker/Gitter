@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { AtIcon } from 'taro-ui'
 import Markdown from '../../components/repo/markdown'
-import { base64_decode } from '../../utils/base64'
+import { base64_decode, base64_encode } from '../../utils/base64'
 
 import './tutorials.less'
 import {GLOBAL_CONFIG} from "../../constants/globalConfig";
@@ -30,6 +30,8 @@ class Tutorials extends Component {
 
   componentWillMount() {
     let params = this.$router.params
+    //debugger
+    console.log("编码后的字符: ", base64_encode("## hello  **B**"));
     this.setState({
       item: JSON.parse(decodeURI(params.value)),
       isShare: params.share
@@ -66,7 +68,7 @@ class Tutorials extends Component {
       },
       complete(res) {
         console.log('content complete', res)
-        if (res.data) {
+        if (res.data && res.data.length > 0) {
           that.setState({
             md: base64_decode(res.data.content)
           })
@@ -81,12 +83,14 @@ class Tutorials extends Component {
   loadItem() {
     const { item } = this.state
     let that = this
+    
     const db = wx.cloud.database()
     db.collection('git_tutorials_content')
       .where({
-        item_id: item.item_id,
+        item_id: item.item_id
     }).get()
       .then(res => {
+        console.log("haha: ", res, item.item_id);
         if (res.data.length > 0) {
           that.setState({
             md: base64_decode(res.data[0].content)
@@ -141,6 +145,7 @@ class Tutorials extends Component {
 
   render() {
     const { md, item, isShare } = this.state
+    console.log("md:", md, base64_decode(md));
     let cacheKey = ''
     if (item) {
       cacheKey = `git_md_content_${item.item_id}`

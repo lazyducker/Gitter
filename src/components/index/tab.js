@@ -4,7 +4,7 @@ import { View, Text } from '@tarojs/components'
 
 import './tab.less'
 
-export default class Segment extends Component {
+export default class Tab extends Component {
 
   static propTypes = {
     tabList: PropTypes.array,

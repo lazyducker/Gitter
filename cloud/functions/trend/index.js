@@ -16,6 +16,7 @@ exports.main = async (event, context) => {
   if (type === 'repositories') {
     const cacheKey = `repositories::${language || 'nolang'}::${since ||
     'daily'}`;
+    console.log("测试.....");
     const cacheData = await db.collection('repositories').where({
       cacheKey: cacheKey
     }).orderBy('cacheDate', 'desc').get()

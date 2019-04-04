@@ -39,7 +39,7 @@ class Git extends Component {
       },
       complete(res) {
         console.log('complete', res)
-        if (res.data) {
+        if (res.data && res.data.length > 0) {
           that.setState({
             itemList: res.data
           })
@@ -62,11 +62,12 @@ class Git extends Component {
   }
 
   loadItemList() {
+    
     let that = this
     const db = wx.cloud.database()
-    db.collection('git_tutorials')
-      .get()
+    db.collection('git_tutorials').get()
       .then(res => {
+        console.log("打印的结果是: ", res);
         that.setState({
           itemList: res.data
         })
@@ -91,6 +92,7 @@ class Git extends Component {
 
   render() {
     const { itemList } = this.state
+    console.log("==>", itemList);
     const list = itemList.map((item, index)=>{
       return (
         <View key={index}>

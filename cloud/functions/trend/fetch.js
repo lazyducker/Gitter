@@ -63,6 +63,7 @@ async function fetchRepositories({
 } = {}) {
   const url = `${GITHUB_URL}/trending/${language}?since=${since}`;
   const data = await fetch(url);
+  console.log("获取仓库列表...", data);
   const $ = cheerio.load(await data.text());
   return (
     $('.repo-list li')

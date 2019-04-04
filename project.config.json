@@ -2,15 +2,16 @@
 	"miniprogramRoot": "dist/",
 	"projectname": "Gitter",
 	"description": "Gitter",
-	"appid": "wx2252b6835e7eb568",
-  "cloudfunctionRoot": "cloud/functions/",
-  "setting": {
-		"urlCheck": true,
+	"appid": "wx7eca0605ec7e99c9",
+	"cloudfunctionRoot": "cloud/functions/",
+	"setting": {
+		"urlCheck": false,
 		"es6": false,
 		"postcss": false,
 		"minified": false,
 		"newFeature": true,
-		"autoAudits": false
+		"autoAudits": false,
+		"nodeModules": true
 	},
 	"compileType": "miniprogram",
 	"libVersion": "2.5.1",

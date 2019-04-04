@@ -4,9 +4,9 @@ import { View, Text } from '@tarojs/components'
 import { AtIcon } from 'taro-ui'
 
 
-import './trendingRepoItem.less'
+import './articleItem.less'
 
-export default class TrendingRepoItem extends Component {
+export default class ArticleItem extends Component {
   static propTypes = {
     item: PropTypes.object,
     categoryType: PropTypes.number

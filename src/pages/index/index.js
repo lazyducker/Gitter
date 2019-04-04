@@ -6,6 +6,8 @@ import { get as getGlobalData, set as setGlobalData  } from '../../utils/global_
 import { AtNoticebar } from 'taro-ui'
 
 import ItemList from '../../components/index/itemList'
+import ArticleList from '../../components/interview/articleList'
+import DashboardHome from '../../components/interview/dashboardHome'
 import Segment from '../../components/index/segment'
 import Empty from '../../components/index/empty'
 
@@ -36,6 +38,7 @@ class Index extends Component {
       notice: null,
       notice_closed: false,
       repos: [],
+      articles:[],
       developers: [],
       range: [
         [{'name': 'Today',
@@ -47,7 +50,7 @@ class Index extends Component {
         languages
       ]
     }
-  }
+  } 
 
   componentWillReceiveProps (nextProps) {
     console.log(this.props, nextProps)
@@ -132,6 +135,24 @@ class Index extends Component {
     })
   }
 
+  loadReportList () {
+    let that = this
+    wx.cloud.callFunction({
+      // 要调用的云函数名称
+      name: 'ydauto_report',
+      // 传递给云函数的event参数
+      data: {
+        sdate: '2018-01-01',
+        edate: '2019-09-24'
+      }
+    }).then(res => {
+      console.log('回调函数: ', res);
+    }).catch(err => {
+      Taro.hideLoading()
+      Taro.stopPullDownRefresh()
+    })
+  }
+
   loadItemList () {
     const { current } = this.state
     let that = this
@@ -146,7 +167,8 @@ class Index extends Component {
       }
     }).then(res => {
       that.setState({
-        repos: res.result.data
+        repos: res.result.data,
+        articles: res.result.data
       }, ()=>{
         Taro.pageScrollTo({
           scrollTop: 0
@@ -214,10 +236,14 @@ class Index extends Component {
 
   loadNotice() {
     let that = this
-    const db = wx.cloud.database()
+    const db = wx.cloud.database();
     db.collection('notices')
       .get()
       .then(res => {
+        let noticeData = new Array();
+        noticeData.push({"notice_id":"1111", "content":"更新提示: 2019-03-11日有更新, 2019-03-11日有更新, 2019-03-11日有更新, 2019-03-11日有更新", "status":true});
+        res.data = noticeData;
+
         console.log('notices', res)
         if (res.data.length > 0) {
           const key = 'notice_key_' + res.data[0].notice_id
@@ -270,6 +296,7 @@ class Index extends Component {
   }
 
   onTabChange(index) {
+    //console.log("index:", index);
     this.setState({
       current: index
     })
@@ -297,11 +324,11 @@ class Index extends Component {
     } else if (categoryValue === 'monthly') {
       categoryType = 2
     }
-    const { developers, repos, current, notice, fixed, notice_closed } = this.state
+    const { developers, repos, current, notice, fixed, notice_closed, articles } = this.state
     return (
       <View className='content'>
         <View className={fixed ? 'segment-fixed' : ''}>
-          <Segment tabList={['REPO', 'USER']}
+          <Segment tabList={['HOME', 'INTER', 'REPO', 'USER']} showAction={true} 
                    current={current}
                    onTabChange={this.onTabChange}
           />
@@ -312,22 +339,36 @@ class Index extends Component {
         }
         {
           (notice.status && !notice_closed) &&
-          <AtNoticebar icon='volume-plus'
-                       close
+          <AtNoticebar icon='volume-plus' 
+                       close 
+                       //marquee 
+                       //speed={50} 
+                       single={true} 
+                       showMore={true} 
+                       moreText={"More"} 
                        onClose={this.onCloseNotice.bind(this)}>
             {notice.content}
           </AtNoticebar>
         }
         {
           current === 0 &&
-          (repos.length > 0 ? <ItemList itemList={repos} type={0} categoryType={categoryType} /> : <Empty />)
+          (repos.length > 0 ? <DashboardHome /> : <Empty />)
         }
         {
           current === 1 &&
-          (developers.length > 0 ? <ItemList itemList={developers} type={1} categoryType={categoryType} /> : <Empty />)
+          (repos.length > 0 ? <ArticleList itemList={repos} categoryType={categoryType} />:<Empty />)
         }
         {
-          this.state.range[1].length > 0 &&
+          current === 2 &&
+          (repos.length > 0 ? <ItemList itemList={repos} type={0} categoryType={categoryType} /> : <Empty />)
+        }
+        {
+          current === 3 &&
+          (developers.length > 0 ? <ItemList itemList={developers} type={1} categoryType={categoryType} /> : <Empty />)
+        }
+
+        {
+          (this.state.range[1].length > 0 && current > 0) &&
           <View>
             <Picker mode='multiSelector'
                     range={this.state.range}
@@ -341,7 +382,7 @@ class Index extends Component {
               </View>
             </Picker>
           </View>
-        }
+        } 
       </View>
     )
   }
